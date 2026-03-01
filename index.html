@@ -12,14 +12,12 @@
             --paper: #f5f0e8;
             --paper-light: #faf7f1;
             --accent: #c0392b;
-            --accent-dark: #962d22;
             --gray-1: #333;
             --gray-2: #666;
             --gray-3: #999;
             --gray-4: #ccc;
             --gray-5: #e8e3db;
             --rule: #c8c2b6;
-            --shadow: rgba(0,0,0,0.06);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,11 +30,9 @@
             min-height: 100vh;
         }
 
-        /* ===== HEADER ===== */
         header {
             background: var(--ink);
             color: var(--paper);
-            padding: 0;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -92,16 +88,15 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        /* ===== SOURCE TABS ===== */
-        .source-bar {
+        .section-bar {
             background: #222;
             border-top: 1px solid #333;
             overflow-x: auto;
             scrollbar-width: none;
         }
-        .source-bar::-webkit-scrollbar { display: none; }
+        .section-bar::-webkit-scrollbar { display: none; }
 
-        .source-tabs {
+        .section-tabs {
             display: flex;
             max-width: 1400px;
             margin: 0 auto;
@@ -109,7 +104,7 @@
             gap: 0;
         }
 
-        .source-tab {
+        .section-tab {
             padding: 10px 20px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -123,17 +118,50 @@
             user-select: none;
         }
 
-        .source-tab:hover { color: #ccc; }
-        .source-tab.active { color: var(--paper); border-bottom-color: var(--accent); }
+        .section-tab:hover { color: #ccc; }
+        .section-tab.active { color: var(--paper); border-bottom-color: var(--accent); }
 
-        /* ===== MAIN LAYOUT ===== */
+        .tab-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            background: #444;
+            color: #aaa;
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .section-tab.active .tab-count {
+            background: var(--accent);
+            color: #fff;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 32px;
         }
 
-        /* ===== LOADING ===== */
+        .edition-line {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--gray-3);
+            border-bottom: 1px solid var(--rule);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .feed-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+
         .loading-state {
             display: flex;
             flex-direction: column;
@@ -159,7 +187,6 @@
             font-weight: 300;
         }
 
-        /* ===== ARTICLES GRID ===== */
         .articles-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -175,16 +202,11 @@
             text-decoration: none;
             color: inherit;
             display: block;
-            position: relative;
         }
 
-        .article-card:hover {
-            background: var(--paper-light);
-        }
-
+        .article-card:hover { background: var(--paper-light); }
         .article-card:nth-child(3n) { border-right: none; }
 
-        /* Featured article - first item */
         .article-card.featured {
             grid-column: 1 / -1;
             padding: 40px 24px;
@@ -200,6 +222,7 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .article-source {
@@ -208,7 +231,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             color: var(--accent);
-            font-weight: 400;
         }
 
         .article-time {
@@ -263,12 +285,26 @@
         }
 
         .article-card:not(.featured) .article-thumbnail {
-            width: 100%;
             aspect-ratio: 16/9;
             margin-bottom: 12px;
         }
 
-        /* ===== ERROR STATE ===== */
+        .section-badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 2px 8px;
+            border-radius: 2px;
+        }
+
+        .badge-international { background: #2c3e50; color: #fff; }
+        .badge-france { background: #0055a4; color: #fff; }
+        .badge-economie { background: #27ae60; color: #fff; }
+        .badge-informatique { background: #8e44ad; color: #fff; }
+        .badge-jeuvideo { background: #e67e22; color: #fff; }
+
         .error-msg {
             text-align: center;
             padding: 60px 20px;
@@ -282,7 +318,6 @@
             color: var(--gray-2);
         }
 
-        /* ===== FOOTER ===== */
         footer {
             border-top: 2px solid var(--ink);
             margin-top: 40px;
@@ -315,16 +350,11 @@
 
         .refresh-btn:hover { background: var(--accent); }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .articles-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .articles-grid { grid-template-columns: repeat(2, 1fr); }
             .article-card:nth-child(3n) { border-right: 1px solid var(--rule); }
             .article-card:nth-child(2n) { border-right: none; }
-            .article-card.featured {
-                grid-template-columns: 1fr;
-            }
+            .article-card.featured { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 640px) {
@@ -332,40 +362,14 @@
             .masthead { font-size: 1.5rem; }
             .header-date { display: none; }
             .container { padding: 16px; }
-            .source-tabs { padding: 0 16px; }
-            .source-tab { padding: 8px 14px; font-size: 0.7rem; }
-
-            .articles-grid {
-                grid-template-columns: 1fr;
-            }
+            .section-tabs { padding: 0 16px; }
+            .section-tab { padding: 8px 14px; font-size: 0.7rem; }
+            .articles-grid { grid-template-columns: 1fr; }
             .article-card { border-right: none !important; }
-            .article-card.featured {
-                grid-template-columns: 1fr;
-                padding: 24px 16px;
-            }
+            .article-card.featured { grid-template-columns: 1fr; padding: 24px 16px; }
             .article-card.featured .article-title { font-size: 1.5rem; }
-
             footer { flex-direction: column; gap: 16px; text-align: center; }
-        }
-
-        /* ===== PRINT LOOK DECORATION ===== */
-        .edition-line {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 8px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: var(--gray-3);
-            border-bottom: 1px solid var(--rule);
-            font-weight: 300;
-            letter-spacing: 0.5px;
-        }
-
-        .feed-count {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
+            .edition-line { padding: 8px 16px; }
         }
     </style>
 </head>
@@ -373,17 +377,12 @@
 
 <header>
     <div class="header-top">
-        <div class="masthead">
-            <span class="le">Le</span><span class="fil">Fil</span>
-        </div>
+        <div class="masthead"><span class="le">Le</span><span class="fil">Fil</span></div>
         <div class="header-date" id="headerDate"></div>
-        <div class="header-status">
-            <div class="pulse"></div>
-            <span>En direct</span>
-        </div>
+        <div class="header-status"><div class="pulse"></div><span>En direct</span></div>
     </div>
-    <div class="source-bar">
-        <div class="source-tabs" id="sourceTabs"></div>
+    <div class="section-bar">
+        <div class="section-tabs" id="sectionTabs"></div>
     </div>
 </header>
 
@@ -404,262 +403,251 @@
 <footer>
     <div>
         <strong>Le Fil</strong> — Agrégateur RSS open source · Hébergé sur <a href="https://pages.github.com" target="_blank">GitHub Pages</a><br>
-        Sources : France 24 · Le Monde · Franceinfo · RFI · 20 Minutes
+        Sources : France 24 · Le Monde · Franceinfo · RFI · 20 Minutes · Numerama · Gamekult
     </div>
     <button class="refresh-btn" onclick="loadAllFeeds()">⟳ Actualiser</button>
 </footer>
 
 <script>
-// ============================================================
-//  CONFIGURATION DES SOURCES RSS
-// ============================================================
-const SOURCES = [
+const SECTIONS = [
     {
         id: 'all',
-        name: 'Toutes',
-        feeds: [] // special: aggregates all
+        name: 'À la Une',
+        feeds: []
     },
     {
-        id: 'france24',
-        name: 'France 24',
-        feeds: ['https://www.france24.com/fr/rss'],
-        color: '#0055a4'
+        id: 'international',
+        name: 'International',
+        badgeClass: 'badge-international',
+        feeds: [
+            { url: 'https://www.france24.com/fr/rss', source: 'France 24' },
+            { url: 'https://www.lemonde.fr/international/rss_full.xml', source: 'Le Monde' },
+            { url: 'https://www.rfi.fr/fr/rss', source: 'RFI' },
+            { url: 'https://www.francetvinfo.fr/monde.rss', source: 'Franceinfo' },
+        ]
     },
     {
-        id: 'lemonde',
-        name: 'Le Monde',
-        feeds: ['https://www.lemonde.fr/rss/une.xml'],
-        color: '#1a1a1a'
+        id: 'france',
+        name: 'France',
+        badgeClass: 'badge-france',
+        feeds: [
+            { url: 'https://www.france24.com/fr/france/rss', source: 'France 24' },
+            { url: 'https://www.lemonde.fr/politique/rss_full.xml', source: 'Le Monde' },
+            { url: 'https://www.francetvinfo.fr/france.rss', source: 'Franceinfo' },
+            { url: 'https://www.20minutes.fr/feeds/rss-une.xml', source: '20 Minutes' },
+        ]
     },
     {
-        id: 'franceinfo',
-        name: 'Franceinfo',
-        feeds: ['https://www.francetvinfo.fr/titres.rss'],
-        color: '#003d82'
+        id: 'economie',
+        name: 'Économie',
+        badgeClass: 'badge-economie',
+        feeds: [
+            { url: 'https://www.lemonde.fr/economie/rss_full.xml', source: 'Le Monde' },
+            { url: 'https://www.france24.com/fr/eco-tech/rss', source: 'France 24' },
+            { url: 'https://www.francetvinfo.fr/economie.rss', source: 'Franceinfo' },
+        ]
     },
     {
-        id: 'rfi',
-        name: 'RFI',
-        feeds: ['https://www.rfi.fr/fr/rss'],
-        color: '#e4002b'
+        id: 'informatique',
+        name: 'Informatique',
+        badgeClass: 'badge-informatique',
+        feeds: [
+            { url: 'https://www.numerama.com/feed/', source: 'Numerama' },
+            { url: 'https://www.lemonde.fr/pixels/rss_full.xml', source: 'Le Monde Pixels' },
+        ]
     },
-
     {
-        id: '20minutes',
-        name: '20 Minutes',
-        feeds: ['https://www.20minutes.fr/feeds/rss-une.xml'],
-        color: '#0078be'
+        id: 'jeuvideo',
+        name: 'Jeux Vidéo',
+        badgeClass: 'badge-jeuvideo',
+        feeds: [
+            { url: 'https://www.gamekult.com/feed.xml', source: 'Gamekult' },
+            { url: 'https://www.numerama.com/pop-culture/feed/', source: 'Numerama' },
+        ]
     }
 ];
 
-const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+let articlesBySection = {};
+let currentSection = 'all';
 
-let allArticles = [];
-let currentSource = 'all';
-
-// ============================================================
-//  DATE DISPLAY
-// ============================================================
-function formatDate() {
+// Date
+(function() {
     const d = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    let str = d.toLocaleDateString('fr-FR', options);
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
+    let str = d.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('headerDate').textContent = str.charAt(0).toUpperCase() + str.slice(1);
+})();
 
-document.getElementById('headerDate').textContent = formatDate();
-
-// ============================================================
-//  BUILD SOURCE TABS
-// ============================================================
+// Tabs
 function buildTabs() {
-    const container = document.getElementById('sourceTabs');
-    SOURCES.forEach(src => {
+    const el = document.getElementById('sectionTabs');
+    el.innerHTML = '';
+    SECTIONS.forEach(sec => {
         const tab = document.createElement('div');
-        tab.className = 'source-tab' + (src.id === currentSource ? ' active' : '');
-        tab.textContent = src.name;
-        tab.dataset.id = src.id;
+        tab.className = 'section-tab' + (sec.id === currentSection ? ' active' : '');
+        const n = (articlesBySection[sec.id] || []).length;
+        tab.innerHTML = sec.name + (n > 0 ? `<span class="tab-count">${n}</span>` : '');
         tab.addEventListener('click', () => {
-            currentSource = src.id;
-            document.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
+            currentSection = sec.id;
+            document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             renderArticles();
         });
-        container.appendChild(tab);
+        el.appendChild(tab);
     });
 }
 
-buildTabs();
-
-// ============================================================
-//  FETCH RSS VIA RSS2JSON
-// ============================================================
-async function fetchFeed(url, sourceName) {
+// Fetch
+async function fetchFeed(url, source) {
     try {
-        const resp = await fetch(RSS2JSON_API + encodeURIComponent(url));
-        const data = await resp.json();
-        if (data.status !== 'ok') return [];
-
-        return data.items.map(item => ({
+        const r = await fetch(RSS2JSON + encodeURIComponent(url));
+        const d = await r.json();
+        if (d.status !== 'ok') return [];
+        return d.items.map(item => ({
             title: item.title || '',
             link: item.link || '#',
-            description: stripHtml(item.description || ''),
-            thumbnail: item.thumbnail || item.enclosure?.link || extractImg(item.description || item.content || ''),
+            description: strip(item.description || ''),
+            thumbnail: item.thumbnail || item.enclosure?.link || imgFromHtml(item.description || item.content || ''),
             pubDate: new Date(item.pubDate),
-            source: sourceName,
-            sourceId: SOURCES.find(s => s.name === sourceName)?.id || ''
+            source
         }));
-    } catch (e) {
-        console.warn(`Erreur chargement ${sourceName}:`, e);
-        return [];
-    }
+    } catch(e) { console.warn('Feed error:', url, e); return []; }
 }
 
-function stripHtml(html) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-}
+function strip(html) { const t = document.createElement('div'); t.innerHTML = html; return t.textContent || ''; }
+function imgFromHtml(h) { const m = h.match(/<img[^>]+src=["']([^"']+)["']/i); return m ? m[1] : ''; }
 
-function extractImg(html) {
-    const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-    return m ? m[1] : '';
-}
-
-// ============================================================
-//  LOAD ALL FEEDS
-// ============================================================
+// Load
 async function loadAllFeeds() {
-    document.getElementById('content').innerHTML = `
-        <div class="loading-state">
-            <div class="loader"></div>
-            <div class="loading-text">Chargement des dépêches…</div>
-        </div>
-    `;
+    document.getElementById('content').innerHTML = '<div class="loading-state"><div class="loader"></div><div class="loading-text">Chargement des dépêches…</div></div>';
 
-    const promises = [];
-    SOURCES.filter(s => s.id !== 'all').forEach(src => {
-        src.feeds.forEach(feedUrl => {
-            promises.push(fetchFeed(feedUrl, src.name));
+    articlesBySection = {};
+    const feedMap = {};
+
+    SECTIONS.filter(s => s.id !== 'all').forEach(sec => {
+        articlesBySection[sec.id] = [];
+        sec.feeds.forEach(f => {
+            if (!feedMap[f.url]) feedMap[f.url] = { url: f.url, source: f.source, sids: [] };
+            feedMap[f.url].sids.push(sec.id);
         });
     });
 
-    const results = await Promise.allSettled(promises);
-    allArticles = [];
+    const results = await Promise.allSettled(
+        Object.values(feedMap).map(t => fetchFeed(t.url, t.source).then(a => ({ ...t, articles: a })))
+    );
 
     results.forEach(r => {
-        if (r.status === 'fulfilled') {
-            allArticles.push(...r.value);
+        if (r.status === 'fulfilled' && r.value.articles) {
+            r.value.sids.forEach(sid => articlesBySection[sid].push(...r.value.articles));
         }
     });
 
-    // Deduplicate by title similarity
-    const seen = new Set();
-    allArticles = allArticles.filter(a => {
-        const key = a.title.toLowerCase().substring(0, 60);
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
+    Object.keys(articlesBySection).forEach(k => { articlesBySection[k] = dedupe(articlesBySection[k]); });
+    // À la Une = uniquement International + France
+    articlesBySection['all'] = dedupe([
+        ...articlesBySection['international'],
+        ...articlesBySection['france']
+    ]);
 
-    // Sort by date descending
-    allArticles.sort((a, b) => b.pubDate - a.pubDate);
-
-    document.getElementById('feedCount').textContent = `${allArticles.length} articles`;
+    document.getElementById('feedCount').textContent = articlesBySection['all'].length + ' articles';
+    buildTabs();
     renderArticles();
 }
 
-// ============================================================
-//  RENDER
-// ============================================================
+function dedupe(arr) {
+    const seen = new Set();
+    return arr.filter(a => {
+        const k = a.title.toLowerCase().substring(0, 60);
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    }).sort((a, b) => b.pubDate - a.pubDate);
+}
+
+// Render
 function renderArticles() {
-    const container = document.getElementById('content');
+    const el = document.getElementById('content');
+    const arts = articlesBySection[currentSection] || [];
 
-    let articles = currentSource === 'all'
-        ? allArticles
-        : allArticles.filter(a => a.sourceId === currentSource);
-
-    if (articles.length === 0) {
-        container.innerHTML = `
-            <div class="error-msg">
-                <h3>Aucun article disponible</h3>
-                <p>Le flux de cette source n'a pas pu être chargé ou est temporairement indisponible.</p>
-            </div>
-        `;
+    if (!arts.length) {
+        el.innerHTML = '<div class="error-msg"><h3>Aucun article disponible</h3><p>Les flux de cette section sont temporairement indisponibles.</p></div>';
         return;
     }
 
     const grid = document.createElement('div');
     grid.className = 'articles-grid';
 
-    articles.slice(0, 30).forEach((article, i) => {
+    arts.slice(0, 30).forEach((a, i) => {
         const card = document.createElement('a');
         card.className = 'article-card' + (i === 0 ? ' featured' : '');
-        card.href = article.link;
+        card.href = a.link;
         card.target = '_blank';
         card.rel = 'noopener noreferrer';
 
-        const timeAgo = getTimeAgo(article.pubDate);
-        const desc = article.description.substring(0, 200);
+        const time = timeAgo(a.pubDate);
+        const desc = a.description.substring(0, 200);
+
+        let badge = '';
+        if (currentSection === 'all') {
+            const sec = findSection(a);
+            if (sec?.badgeClass) badge = `<span class="section-badge ${sec.badgeClass}">${sec.name}</span>`;
+        }
 
         if (i === 0) {
-            // Featured layout
             card.innerHTML = `
                 <div>
                     <div class="article-meta">
-                        <span class="article-source">${article.source}</span>
+                        <span class="article-source">${a.source}</span>
                         <span class="sep"></span>
-                        <span class="article-time">${timeAgo}</span>
+                        <span class="article-time">${time}</span>
+                        ${badge}
                     </div>
-                    <h2 class="article-title">${escapeHtml(article.title)}</h2>
-                    <p class="article-desc">${escapeHtml(desc)}</p>
+                    <h2 class="article-title">${esc(a.title)}</h2>
+                    <p class="article-desc">${esc(desc)}</p>
                 </div>
-                ${article.thumbnail ? `<img class="article-thumbnail" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div></div>'}
-            `;
+                ${a.thumbnail ? `<img class="article-thumbnail" src="${a.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div></div>'}`;
         } else {
             card.innerHTML = `
-                ${article.thumbnail ? `<img class="article-thumbnail" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
+                ${a.thumbnail ? `<img class="article-thumbnail" src="${a.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
                 <div class="article-meta">
-                    <span class="article-source">${article.source}</span>
+                    <span class="article-source">${a.source}</span>
                     <span class="sep"></span>
-                    <span class="article-time">${timeAgo}</span>
+                    <span class="article-time">${time}</span>
+                    ${badge}
                 </div>
-                <h3 class="article-title">${escapeHtml(article.title)}</h3>
-                <p class="article-desc">${escapeHtml(desc)}</p>
-            `;
+                <h3 class="article-title">${esc(a.title)}</h3>
+                <p class="article-desc">${esc(desc)}</p>`;
         }
-
         grid.appendChild(card);
     });
 
-    container.innerHTML = '';
-    container.appendChild(grid);
+    el.innerHTML = '';
+    el.appendChild(grid);
 }
 
-function getTimeAgo(date) {
-    const now = new Date();
-    const diff = Math.floor((now - date) / 1000);
-    if (diff < 60) return "À l'instant";
-    if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
-    if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
-    if (diff < 172800) return 'Hier';
-    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+function findSection(article) {
+    for (const sid of ['jeuvideo','informatique','economie','france','international']) {
+        if (articlesBySection[sid]?.some(x => x.title === article.title && x.source === article.source)) {
+            return SECTIONS.find(s => s.id === sid);
+        }
+    }
+    return null;
 }
 
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+function timeAgo(d) {
+    const s = Math.floor((new Date() - d) / 1000);
+    if (s < 60) return "À l'instant";
+    if (s < 3600) return `Il y a ${Math.floor(s/60)} min`;
+    if (s < 86400) return `Il y a ${Math.floor(s/3600)}h`;
+    if (s < 172800) return 'Hier';
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
 }
 
-// ============================================================
-//  INIT & AUTO-REFRESH
-// ============================================================
+function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+buildTabs();
 loadAllFeeds();
-
-// Auto-refresh toutes les 5 minutes
 setInterval(loadAllFeeds, 5 * 60 * 1000);
 </script>
-
 </body>
 </html>
