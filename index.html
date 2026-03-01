@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Fil — Agrégateur d'Actualités</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --paper: #f5f0e8;
+            --paper-light: #faf7f1;
+            --accent: #c0392b;
+            --accent-dark: #962d22;
+            --gray-1: #333;
+            --gray-2: #666;
+            --gray-3: #999;
+            --gray-4: #ccc;
+            --gray-5: #e8e3db;
+            --rule: #c8c2b6;
+            --shadow: rgba(0,0,0,0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', 'Georgia', serif;
+            background: var(--paper);
+            color: var(--ink);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 32px;
+        }
+
+        .masthead {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .masthead .le { font-style: italic; font-weight: 400; opacity: 0.7; }
+        .masthead .fil { color: var(--accent); }
+
+        .header-date {
+            font-size: 0.85rem;
+            opacity: 0.6;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .pulse {
+            width: 8px; height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* ===== SOURCE TABS ===== */
+        .source-bar {
+            background: #222;
+            border-top: 1px solid #333;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .source-bar::-webkit-scrollbar { display: none; }
+
+        .source-tabs {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+            gap: 0;
+        }
+
+        .source-tab {
+            padding: 10px 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #888;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .source-tab:hover { color: #ccc; }
+        .source-tab.active { color: var(--paper); border-bottom-color: var(--accent); }
+
+        /* ===== MAIN LAYOUT ===== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 0;
+            gap: 20px;
+        }
+
+        .loader {
+            width: 40px; height: 40px;
+            border: 3px solid var(--gray-5);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            font-size: 0.9rem;
+            color: var(--gray-3);
+            font-weight: 300;
+        }
+
+        /* ===== ARTICLES GRID ===== */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+
+        .article-card {
+            padding: 24px;
+            border-right: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule);
+            transition: background 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+        }
+
+        .article-card:hover {
+            background: var(--paper-light);
+        }
+
+        .article-card:nth-child(3n) { border-right: none; }
+
+        /* Featured article - first item */
+        .article-card.featured {
+            grid-column: 1 / -1;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: start;
+            border-right: none;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .article-source {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            font-weight: 400;
+        }
+
+        .article-time {
+            font-size: 0.75rem;
+            color: var(--gray-3);
+            font-weight: 300;
+        }
+
+        .article-meta .sep {
+            width: 3px; height: 3px;
+            background: var(--gray-4);
+            border-radius: 50%;
+        }
+
+        .article-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+
+        .article-card.featured .article-title {
+            font-size: 2rem;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .article-desc {
+            font-size: 0.9rem;
+            color: var(--gray-2);
+            line-height: 1.55;
+            font-weight: 300;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-card.featured .article-desc {
+            -webkit-line-clamp: 5;
+            font-size: 1rem;
+        }
+
+        .article-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            border-radius: 2px;
+            background: var(--gray-5);
+        }
+
+        .article-card:not(.featured) .article-thumbnail {
+            width: 100%;
+            aspect-ratio: 16/9;
+            margin-bottom: 12px;
+        }
+
+        /* ===== ERROR STATE ===== */
+        .error-msg {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-3);
+        }
+
+        .error-msg h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            color: var(--gray-2);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            border-top: 2px solid var(--ink);
+            margin-top: 40px;
+            padding: 24px 32px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--gray-3);
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        .refresh-btn {
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover { background: var(--accent); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .article-card:nth-child(3n) { border-right: 1px solid var(--rule); }
+            .article-card:nth-child(2n) { border-right: none; }
+            .article-card.featured {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-top { padding: 12px 16px; }
+            .masthead { font-size: 1.5rem; }
+            .header-date { display: none; }
+            .container { padding: 16px; }
+            .source-tabs { padding: 0 16px; }
+            .source-tab { padding: 8px 14px; font-size: 0.7rem; }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+            .article-card { border-right: none !important; }
+            .article-card.featured {
+                grid-template-columns: 1fr;
+                padding: 24px 16px;
+            }
+            .article-card.featured .article-title { font-size: 1.5rem; }
+
+            footer { flex-direction: column; gap: 16px; text-align: center; }
+        }
+
+        /* ===== PRINT LOOK DECORATION ===== */
+        .edition-line {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 8px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--gray-3);
+            border-bottom: 1px solid var(--rule);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .feed-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <div class="masthead">
+            <span class="le">Le</span><span class="fil">Fil</span>
+        </div>
+        <div class="header-date" id="headerDate"></div>
+        <div class="header-status">
+            <div class="pulse"></div>
+            <span>En direct</span>
+        </div>
+    </div>
+    <div class="source-bar">
+        <div class="source-tabs" id="sourceTabs"></div>
+    </div>
+</header>
+
+<div class="edition-line">
+    <span>Édition continue — Agrégation de sources publiques</span>
+    <span class="feed-count" id="feedCount"></span>
+</div>
+
+<div class="container">
+    <div id="content">
+        <div class="loading-state">
+            <div class="loader"></div>
+            <div class="loading-text">Chargement des dépêches…</div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div>
+        <strong>Le Fil</strong> — Agrégateur RSS open source · Hébergé sur <a href="https://pages.github.com" target="_blank">GitHub Pages</a><br>
+        Sources : France 24 · Le Monde · Franceinfo · RFI · Le Point · 20 Minutes
+    </div>
+    <button class="refresh-btn" onclick="loadAllFeeds()">⟳ Actualiser</button>
+</footer>
+
+<script>
+// ============================================================
+//  CONFIGURATION DES SOURCES RSS
+// ============================================================
+const SOURCES = [
+    {
+        id: 'all',
+        name: 'Toutes',
+        feeds: [] // special: aggregates all
+    },
+    {
+        id: 'france24',
+        name: 'France 24',
+        feeds: ['https://www.france24.com/fr/rss'],
+        color: '#0055a4'
+    },
+    {
+        id: 'lemonde',
+        name: 'Le Monde',
+        feeds: ['https://www.lemonde.fr/rss/une.xml'],
+        color: '#1a1a1a'
+    },
+    {
+        id: 'franceinfo',
+        name: 'Franceinfo',
+        feeds: ['https://www.francetvinfo.fr/titres.rss'],
+        color: '#003d82'
+    },
+    {
+        id: 'rfi',
+        name: 'RFI',
+        feeds: ['https://www.rfi.fr/fr/rss'],
+        color: '#e4002b'
+    },
+    {
+        id: 'lepoint',
+        name: 'Le Point',
+        feeds: ['https://www.lepoint.fr/24h-infos/rss.xml'],
+        color: '#d32f2f'
+    },
+    {
+        id: '20minutes',
+        name: '20 Minutes',
+        feeds: ['https://www.20minutes.fr/feeds/rss-une.xml'],
+        color: '#0078be'
+    }
+];
+
+const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
+
+let allArticles = [];
+let currentSource = 'all';
+
+// ============================================================
+//  DATE DISPLAY
+// ============================================================
+function formatDate() {
+    const d = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    let str = d.toLocaleDateString('fr-FR', options);
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+document.getElementById('headerDate').textContent = formatDate();
+
+// ============================================================
+//  BUILD SOURCE TABS
+// ============================================================
+function buildTabs() {
+    const container = document.getElementById('sourceTabs');
+    SOURCES.forEach(src => {
+        const tab = document.createElement('div');
+        tab.className = 'source-tab' + (src.id === currentSource ? ' active' : '');
+        tab.textContent = src.name;
+        tab.dataset.id = src.id;
+        tab.addEventListener('click', () => {
+            currentSource = src.id;
+            document.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            renderArticles();
+        });
+        container.appendChild(tab);
+    });
+}
+
+buildTabs();
+
+// ============================================================
+//  FETCH RSS VIA RSS2JSON
+// ============================================================
+async function fetchFeed(url, sourceName) {
+    try {
+        const resp = await fetch(RSS2JSON_API + encodeURIComponent(url));
+        const data = await resp.json();
+        if (data.status !== 'ok') return [];
+
+        return data.items.map(item => ({
+            title: item.title || '',
+            link: item.link || '#',
+            description: stripHtml(item.description || ''),
+            thumbnail: item.thumbnail || item.enclosure?.link || extractImg(item.description || item.content || ''),
+            pubDate: new Date(item.pubDate),
+            source: sourceName,
+            sourceId: SOURCES.find(s => s.name === sourceName)?.id || ''
+        }));
+    } catch (e) {
+        console.warn(`Erreur chargement ${sourceName}:`, e);
+        return [];
+    }
+}
+
+function stripHtml(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+function extractImg(html) {
+    const m = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+    return m ? m[1] : '';
+}
+
+// ============================================================
+//  LOAD ALL FEEDS
+// ============================================================
+async function loadAllFeeds() {
+    document.getElementById('content').innerHTML = `
+        <div class="loading-state">
+            <div class="loader"></div>
+            <div class="loading-text">Chargement des dépêches…</div>
+        </div>
+    `;
+
+    const promises = [];
+    SOURCES.filter(s => s.id !== 'all').forEach(src => {
+        src.feeds.forEach(feedUrl => {
+            promises.push(fetchFeed(feedUrl, src.name));
+        });
+    });
+
+    const results = await Promise.allSettled(promises);
+    allArticles = [];
+
+    results.forEach(r => {
+        if (r.status === 'fulfilled') {
+            allArticles.push(...r.value);
+        }
+    });
+
+    // Deduplicate by title similarity
+    const seen = new Set();
+    allArticles = allArticles.filter(a => {
+        const key = a.title.toLowerCase().substring(0, 60);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+
+    // Sort by date descending
+    allArticles.sort((a, b) => b.pubDate - a.pubDate);
+
+    document.getElementById('feedCount').textContent = `${allArticles.length} articles`;
+    renderArticles();
+}
+
+// ============================================================
+//  RENDER
+// ============================================================
+function renderArticles() {
+    const container = document.getElementById('content');
+
+    let articles = currentSource === 'all'
+        ? allArticles
+        : allArticles.filter(a => a.sourceId === currentSource);
+
+    if (articles.length === 0) {
+        container.innerHTML = `
+            <div class="error-msg">
+                <h3>Aucun article disponible</h3>
+                <p>Le flux de cette source n'a pas pu être chargé ou est temporairement indisponible.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'articles-grid';
+
+    articles.slice(0, 30).forEach((article, i) => {
+        const card = document.createElement('a');
+        card.className = 'article-card' + (i === 0 ? ' featured' : '');
+        card.href = article.link;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
+
+        const timeAgo = getTimeAgo(article.pubDate);
+        const desc = article.description.substring(0, 200);
+
+        if (i === 0) {
+            // Featured layout
+            card.innerHTML = `
+                <div>
+                    <div class="article-meta">
+                        <span class="article-source">${article.source}</span>
+                        <span class="sep"></span>
+                        <span class="article-time">${timeAgo}</span>
+                    </div>
+                    <h2 class="article-title">${escapeHtml(article.title)}</h2>
+                    <p class="article-desc">${escapeHtml(desc)}</p>
+                </div>
+                ${article.thumbnail ? `<img class="article-thumbnail" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : '<div></div>'}
+            `;
+        } else {
+            card.innerHTML = `
+                ${article.thumbnail ? `<img class="article-thumbnail" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
+                <div class="article-meta">
+                    <span class="article-source">${article.source}</span>
+                    <span class="sep"></span>
+                    <span class="article-time">${timeAgo}</span>
+                </div>
+                <h3 class="article-title">${escapeHtml(article.title)}</h3>
+                <p class="article-desc">${escapeHtml(desc)}</p>
+            `;
+        }
+
+        grid.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(grid);
+}
+
+function getTimeAgo(date) {
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return "À l'instant";
+    if (diff < 3600) return `Il y a ${Math.floor(diff / 60)} min`;
+    if (diff < 86400) return `Il y a ${Math.floor(diff / 3600)}h`;
+    if (diff < 172800) return 'Hier';
+    return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ============================================================
+//  INIT & AUTO-REFRESH
+// ============================================================
+loadAllFeeds();
+
+// Auto-refresh toutes les 5 minutes
+setInterval(loadAllFeeds, 5 * 60 * 1000);
+</script>
+
+</body>
+</html>
